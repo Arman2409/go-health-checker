@@ -2,35 +2,22 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"os"
+	"main.go/helpers"
+	"main.go/constants"
 )
 
-type result struct {
-	i   int
-	msg string
-}
-
-func checkUrl(url string, i int, c chan result) {
-	_, err := http.Get(url)
-	if err != nil {
-		c <- result{i, "❌ " + url + " is down!"}
-		return
-	}
-	c <- result{i, "✅ " + url + " is up!"}
-}
-
 func main() {
-	c := make(chan result)
+	c := make(chan helpers.Result)
 
-	for i, url := range URLs {
-		go checkUrl(url, i, c)
+	for i, url := range constants.URLs {
+		go helpers.CheckURL(url, i, c)
 	}
 
-	results := make([]string, len(URLs))
-	for i := 0; i < len(URLs); i++ {
+	results := make([]string, len(constants.URLs))
+	for i := 0; i < len(constants.URLs); i++ {
 		r := <-c
-		results[r.i] = r.msg
+		results[r.Index] = r.Msg
 	}
 
 	for _, msg := range results {

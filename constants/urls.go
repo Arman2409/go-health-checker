@@ -1,4 +1,4 @@
-package main
+package constants
 
 var URLs = []string{
     "https://google.com",
